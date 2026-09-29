@@ -1,0 +1,7 @@
+.git
+.mvn
+input
+target
+docs
+README.md
+*.log

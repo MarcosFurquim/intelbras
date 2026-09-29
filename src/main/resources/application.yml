@@ -1,0 +1,45 @@
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: iot-event-case
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/case_events}
+    username: ${SPRING_DATASOURCE_USERNAME:case_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:case_password}
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      properties:
+        enable.idempotence: true
+    consumer:
+      group-id: iot-event-processor
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.value.default.type: com.marcosfurquim.iotcase.model.EventEnvelope
+        spring.json.trusted.packages: com.marcosfurquim.iotcase.model
+        spring.json.use.type.headers: false
+    listener:
+      ack-mode: record
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+case:
+  csv-path: ${CASE_CSV_PATH:./input/case_backend_senior_eventos_sanitizados.csv}
+  topics:
+    events: iot.events
+    dead-letter: iot.events.dlt
+  partitions: 6

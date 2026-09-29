@@ -1,0 +1,4 @@
+event_number,timestamp_log,msgType,did,dname,pid,parentDid,parentPid,utcTime,userId,oauthProject,content,body_completo
+1,2026-09-25T08:00:00+00:00,iotProperty,TEST-DEVICE-1,Test Device,TEST-PRODUCT,,,20260925T080000,TEST-USER,TEST-PROJECT,"{""properties"":{""battery"":90}}","{""msgType"":""iotProperty"",""did"":""TEST-DEVICE-1"",""content"":{""properties"":{""battery"":90}}}"
+2,2026-09-25T08:01:00+00:00,online,TEST-DEVICE-1,Test Device,TEST-PRODUCT,,,20260925T080100,TEST-USER,TEST-PROJECT,{},"{""msgType"":""online"",""did"":""TEST-DEVICE-1"",""content"":{}}"
+3,2026-09-25T08:02:00+00:00,informationTransfer,,Test Device,,,,,TEST-USER,TEST-PROJECT,{},"{""msgType"":""informationTransfer"",""deviceId"":""TEST-DEVICE-2"",""channelId"":""0""}"
