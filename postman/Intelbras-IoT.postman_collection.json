@@ -162,7 +162,7 @@
             "exec": [
               "pm.test(\"Métricas disponíveis\", function () {",
               "    pm.response.to.have.status(200);",
-              "    pm.expect(pm.response.text()).to.include(\"case_events_processed_total\");",
+              "    pm.expect(pm.response.text()).to.include(\"case_events_published_total\");",
               "});"
             ]
           }
