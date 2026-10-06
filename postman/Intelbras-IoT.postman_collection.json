@@ -1,0 +1,173 @@
+{
+  "info": {
+    "_postman_id": "833cd861-8f76-4fdc-b907-dd346359cf6b",
+    "name": "Intelbras | Case IoT Backend",
+    "description": "Roteiro local da demonstração: saúde, importação do CSV, resumo persistido no PostgreSQL e métricas Prometheus. Execute em ordem. Se o resumo ainda não somar 100, envie a consulta novamente, pois o consumidor Kafka é assíncrono. Nenhum dado do CSV ou credencial é incluído nesta coleção.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 | Saúde",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "health"
+          ]
+        },
+        "description": "Confirma que a API local está disponível."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"API saudável\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json().status).to.eql(\"UP\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 | Importar 100 eventos",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/imports/sample",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "imports",
+            "sample"
+          ]
+        },
+        "description": "Lê o CSV configurado, publica os eventos no Kafka e aguarda confirmação do broker. O consumo segue assíncrono."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"100 publicados e 0 rejeitados\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.accepted).to.eql(100);",
+              "    pm.expect(result.rejected).to.eql(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 | Resumo no PostgreSQL",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/processing/summary",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "processing",
+            "summary"
+          ]
+        },
+        "description": "Consulta o resumo por tipo persistido no PostgreSQL. Repita até a soma chegar a 100."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const counts = pm.response.json();",
+              "const total = Object.values(counts).reduce((sum, count) => sum + Number(count), 0);",
+              "pm.collectionVariables.set(\"processedTotal\", total);",
+              "console.log(\"Eventos processados:\", total, counts);",
+              "pm.test(\"11 tipos e 100 eventos no PostgreSQL\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(Object.keys(counts)).to.have.length(11);",
+              "    pm.expect(total).to.eql(100);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 | Métricas Prometheus",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/actuator/prometheus",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "actuator",
+            "prometheus"
+          ]
+        },
+        "description": "Mostra os contadores de publicação, processamento, duplicatas, rejeição e DLT."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Métricas disponíveis\", function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.text()).to.include(\"case_events_processed_total\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

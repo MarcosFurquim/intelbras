@@ -44,6 +44,8 @@ Métricas estão em `http://127.0.0.1:8080/actuator/prometheus`. Logs:
 docker compose logs -f app
 ```
 
+Para a apresentação no Postman, importe [a coleção de demonstração](postman/Intelbras-IoT.postman_collection.json). Ela traz os pedidos de saúde, importação, resumo consultado no PostgreSQL e métricas, nessa ordem. A variável `baseUrl` já aponta para `http://127.0.0.1:8080`. Repita a consulta de resumo se o consumidor ainda estiver processando os eventos.
+
 Para consultar o resultado sem expor o JSON original:
 
 ```bash

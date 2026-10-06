@@ -12,6 +12,8 @@ Confirme que o CSV recebido está em `input/` e que a soma de registros em `/api
 
 ## Demonstração de 5 minutos
 
+No Postman Desktop, abra a coleção [Intelbras | Case IoT Backend](../postman/Intelbras-IoT.postman_collection.json) em **My Workspace** e execute os pedidos numerados em ordem. O Postman web com Cloud Agent não consegue acessar `127.0.0.1`.
+
 1. Mostrar o diagrama em `docs/architecture.md` e as 11 categorias observadas no CSV.
 2. Chamar `POST /api/imports/sample`; destacar `accepted=100`, `rejected=0`.
 3. Chamar `GET /api/processing/summary` até somar 100; mostrar os tipos no PostgreSQL e as métricas em `/actuator/prometheus`.
