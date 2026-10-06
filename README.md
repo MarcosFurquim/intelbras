@@ -20,7 +20,7 @@ Case técnico de Backend Sênior. A aplicação lê o CSV fornecido, publica os 
 
 ## Execução local
 
-1. Coloque `case_backend_senior_eventos_sanitizados.csv` em `input/`. O arquivo recebido já está nessa pasta na cópia local do projeto; se clonar o repositório, copie-o novamente.
+1. Crie a pasta `input/` se necessário e coloque nela `case_backend_senior_eventos_sanitizados.csv`. O arquivo recebido já está nessa pasta na cópia local do projeto; se clonar o repositório, crie a pasta e copie o CSV novamente.
 2. Inicie o ambiente:
 
 ```bash

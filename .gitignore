@@ -3,6 +3,5 @@ target/
 .vscode/
 .DS_Store
 *.log
-input/*
-!input/README.md
+input/
 .env
